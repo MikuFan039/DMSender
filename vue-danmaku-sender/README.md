@@ -2,7 +2,7 @@
 采用vue + elementui作为前端页面，至于为啥那么麻烦还分前后端是因为把它当练手项目..
 
 ### 安装依赖
-npm install --registry=https://registry.npm.taobao.org
+npm install --registry=http://registry.npmmirror.com
 
 ### 开发
 npm run dev

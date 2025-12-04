@@ -12,7 +12,7 @@
         <el-menu-item index="exo-xml">EXO文件转弹幕XML文件</el-menu-item>
       </el-submenu>
    
-      <el-menu-item index=""><a href="http://doc.danmaku.fans" target="_blank" style="text-decoration:none">使用指南</a></el-menu-item>
+      <el-menu-item index=""><a href="/docs/index.html" target="_blank" style="text-decoration:none">使用指南</a></el-menu-item>
 
     </el-menu>
   </div>

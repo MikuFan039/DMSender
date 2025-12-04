@@ -3,7 +3,6 @@ package com.hikari.danmaku.utils;
 import cn.hutool.core.util.NumberUtil;
 import com.hikari.danmaku.constants.Easing;
 import com.hikari.danmaku.entity.*;
-import com.hikari.danmaku.utils.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.context.annotation.Bean;
 
@@ -573,18 +572,14 @@ public class ExoUtil {
                     exoBean.setColor(ColorUtil.hexto10(exoBean.getColor()));
                 }
                 System.out.println(i);
-
-                // --- MODIFICATION START ---
-                // 修复空指针异常：将getText()的结果存入局部变量，并对局部变量进行判断
-                String text = exoBean.getText();
-                if(text != null && (text.contains("<") || text.contains(">") || text.contains("\\"))){
+                if(exoBean.getText()!= null && (exoBean.getText().contains("<") || exoBean.getText().contains(">"))  || exoBean.getText().contains("\\")){
+                    String text = exoBean.getText();
                     text = text.replace("<","&lt;");
                     text = text.replace(">","&gt;");
                     text = text.replace("\\","\\\\");
                     text = text.replace("\\\\n","\\n");
                     exoBean.setText(text);
                 }
-                // --- MODIFICATION END ---
 
                 danmakuStr.append(exoBean.getColor()).append(",");
                 danmakuStr.append("null,0,null,null\">");
@@ -596,8 +591,7 @@ public class ExoUtil {
 //                danmakuStr.append(startY).append(",");
                 danmakuContentStr.append("\"").append(exoBean.getAlpha()).append("\"").append(",");
                 danmakuContentStr.append("\"").append(exoBean.getLifeTime()).append("\"").append(",");
-                // 确保getText()在此时非空，如果之前是null，这里会使用null，但后续setText()会处理
-                danmakuContentStr.append("\"").append(exoBean.getText() != null ? exoBean.getText() : "").append("\"").append(",");
+                danmakuContentStr.append("\"").append(exoBean.getText()).append("\"").append(",");
                 danmakuContentStr.append(exoBean.getZRotation()).append(",");//Z_Rotation
                 danmakuContentStr.append(exoBean.getYRotation()).append(",");//Y_Rotation
                 danmakuContentStr.append("\"").append(endX).append("\"").append(",");
@@ -911,12 +905,7 @@ public class ExoUtil {
                     aOutline.setOutlineSize(Integer.valueOf(value));
                     break;
                 case "模糊":
-                    if (value.contains(",")) {
-                        String[] sArray = value.split(",");
-                        aOutline.setOutlineAlpha(doubleTrans(1 - Double.valueOf(sArray[0]) * 0.01) + "-" + doubleTrans(1 - Double.valueOf(sArray[1]) * 0.01));
-                    } else {
-                        aOutline.setOutlineAlpha(doubleTrans(1 - Double.valueOf(value) * 0.01) + "-" + doubleTrans(1 - Double.valueOf(value) * 0.01));
-                    }
+                    aOutline.setOutlineAlpha(doubleTrans(1 - Double.valueOf(value)*0.01 ) + "-" + doubleTrans(1 - Double.valueOf(value)*0.01));
                     break;
                 case "color":
                     aOutline.setOutlineColor(value);
@@ -1043,7 +1032,7 @@ public class ExoUtil {
                     double startTime = d2((Integer.valueOf(value)-1) / 30D);
                     if(xmlEffect != null){
                         if( xmlEffect.getIsAdvanceStartTime() ){
-                            startTime = startTime - 0.05;
+                         startTime = startTime - 0.05;
                         }
                     }
                     exoBean.setStartTime(startTime);
@@ -1343,20 +1332,20 @@ public class ExoUtil {
             AviutlExo tmp = itr.next();
             List<AulAnmEffect> aulanmList = tmp.getAulAnmEffectList();
             if (aulanmList != null){
-                for(AulAnmEffect aulanm:aulanmList){
-                    Optional<AulAnmEffect> anmOpt = Optional.ofNullable(aulanm);
-                    if (anmOpt.isPresent()) {
-                        if("打字".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
-                            itr.remove();
-                        }
-                        if("字间扩展收缩".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
-                            itr.remove();
-                        }
-                        if("换行转弹幕".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
-                            itr.remove();
-                        }
-                    }
-                }
+               for(AulAnmEffect aulanm:aulanmList){
+                   Optional<AulAnmEffect> anmOpt = Optional.ofNullable(aulanm);
+                   if (anmOpt.isPresent()) {
+                       if("打字".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
+                           itr.remove();
+                       }
+                       if("字间扩展收缩".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
+                           itr.remove();
+                       }
+                       if("换行转弹幕".equals(anmOpt.get().getName()) && anmOpt.get().getName().equals(anmName) ){
+                           itr.remove();
+                       }
+                   }
+               }
             }
         }
         partExoList.addAll(newExoList);
@@ -1516,37 +1505,37 @@ public class ExoUtil {
 
 
     public static boolean checkAnmEffect(List<AviutlExo> partExoList, int k) {
-        AviutlExo aviExo = partExoList.get(k);
-        AviutlExo lastAviExo = partExoList.get(k-1);
-        boolean flag = true;
-        List<AulAnmEffect> aulAnmEffectList = aviExo.getAulAnmEffectList();
-        if(aulAnmEffectList != null) {
-            for(int j = 0; j < aulAnmEffectList.size(); j++){
-                AulAnmEffect aulAnmEffect = new AulAnmEffect();
-                aulAnmEffect = aulAnmEffectList.get(j);
-                Optional<AulAnmEffect> anmOpt = Optional.ofNullable(aulAnmEffect);
-                String name = "";
-                if (anmOpt.isPresent()) {
-                    String track0 = anmOpt.get().getTrack0();
-                    String track1 = anmOpt.get().getTrack1();
-                    String track2 = anmOpt.get().getTrack2();
-                    String track3 = anmOpt.get().getTrack3();
-                    String param = anmOpt.get().getParam();
-                    name = lastAviExo.getAulAnmEffectList().get(j).getName();//链式没有效果名，取链头的效果名称
+            AviutlExo aviExo = partExoList.get(k);
+            AviutlExo lastAviExo = partExoList.get(k-1);
+            boolean flag = true;
+            List<AulAnmEffect> aulAnmEffectList = aviExo.getAulAnmEffectList();
+            if(aulAnmEffectList != null) {
+                for(int j = 0; j < aulAnmEffectList.size(); j++){
+                    AulAnmEffect aulAnmEffect = new AulAnmEffect();
+                    aulAnmEffect = aulAnmEffectList.get(j);
+                    Optional<AulAnmEffect> anmOpt = Optional.ofNullable(aulAnmEffect);
+                    String name = "";
+                    if (anmOpt.isPresent()) {
+                        String track0 = anmOpt.get().getTrack0();
+                        String track1 = anmOpt.get().getTrack1();
+                        String track2 = anmOpt.get().getTrack2();
+                        String track3 = anmOpt.get().getTrack3();
+                        String param = anmOpt.get().getParam();
+                        name = lastAviExo.getAulAnmEffectList().get(j).getName();//链式没有效果名，取链头的效果名称
 
-                    if("分段移动".equals(name)){
-                        System.out.println("分段移动");
-                        flag = false;
-                        aulAnmEffect.setName(name);
-                        // 单纯分段
-                        aviExo.setText(lastAviExo.getText());//补齐文本
-                        aviExo.setFont(lastAviExo.getFont());//补齐字体
-                        aviExo.setColor(lastAviExo.getColor());//补齐颜色
+                        if("分段移动".equals(name)){
+                            System.out.println("分段移动");
+                            flag = false;
+                            aulAnmEffect.setName(name);
+                            // 单纯分段
+                            aviExo.setText(lastAviExo.getText());//补齐文本
+                            aviExo.setFont(lastAviExo.getFont());//补齐字体
+                            aviExo.setColor(lastAviExo.getColor());//补齐颜色
+                        }
+
                     }
-
                 }
             }
-        }
         return flag;
     }
 
