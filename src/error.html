@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>启动失败</title>
+  <style>
+    :root {
+      --error-color: #e74c3c;
+      --text-color: #333;
+    }
+
+    body {
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background: linear-gradient(135deg, #ffefef 0%, #ffcccc 100%);
+      color: var(--text-color);
+    }
+
+    .error-container {
+      text-align: center;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 80%;
+    }
+
+    .error-desc {
+      margin: auto;
+      padding: 10px;
+      text-align: left;
+      max-width: 600px;
+      width: 80%;
+    }
+
+    .error-icon {
+      font-size: 60px;
+      color: var(--error-color);
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      color: var(--error-color);
+      margin-bottom: 20px;
+    }
+
+    .actions {
+      margin: 30px 0;
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 12px 25px;
+      border: none;
+      border-radius: 30px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 600;
+      min-width: 150px;
+    }
+
+    #btnRetryJava {
+      background: #3498db;
+      color: white;
+    }
+
+    #btnRetryJava:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+    }
+
+    #btnRetryApp {
+      background: var(--error-color);
+      color: white;
+    }
+
+    #btnRetryApp:hover {
+      background: #c0392b;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+    }
+
+    #btnClose {
+      background: #95a5a6;
+      color: white;
+    }
+
+    #btnClose:hover {
+      background: #7f8c8d;
+      transform: translateY(-2px);
+    }
+
+    .log-container {
+      text-align: left;
+      margin-top: 20px;
+      max-height: 200px;
+      overflow-y: auto;
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 14px;
+      white-space: pre-wrap;
+    }
+
+    .log-title {
+      text-align: left;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--error-color);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="error-container">
+    <h1>应用程序启动失败</h1>
+    <div class="error-desc">
+      <h3>无法启动弹幕发射场，可能的原因如下：</h3>
+      <p>1. 以下端口被占用：8010、3306、6379</p>
+      <p>2. Java进程未启动或意外终止</p>
+      <p>3. 未知的内部错误</p>
+    </div>
+
+    <div class="actions">
+      <button id="btnRetryJava">重启Java</button>
+      <button id="btnRetryApp">重启应用</button>
+      <button id="btnClose">关闭应用</button>
+    </div>
+
+    <div class="log-title">错误日志：</div>
+    <div class="log-container" id="logContent">正在加载日志...</div>
+  </div>
+
+  <script>
+    const logContent = document.getElementById("logContent");
+    const btnRetryJava = document.getElementById("btnRetryJava");
+    const btnRetryApp = document.getElementById("btnRetryApp");
+    const btnClose = document.getElementById("btnClose");
+
+    // 获取日志路径并加载
+    const loadLogs = async () => {
+      try {
+        const logDir = await window.electron.app.getPath("userData");
+        const logPath = `${logDir}/logs/dmsender.log`;
+
+        const response = await fetch(logPath);
+        if (response.ok) {
+          const text = await response.text();
+          logContent.textContent = text || "日志文件为空";
+        } else {
+          logContent.textContent = "无法加载日志文件";
+        }
+      } catch (error) {
+        logContent.textContent = `加载日志失败: ${error.message}`;
+      }
+    };
+
+    // 按钮事件
+    btnRetryJava.addEventListener("click", () => {
+      // 发送重启Java进程的请求
+      window.electron.app.restartJava();
+    });
+
+    btnRetryApp.addEventListener("click", () => {
+      // 重新启动整个应用
+      window.electron.app.restart();
+    });
+
+    btnClose.addEventListener("click", () => {
+      // 关闭应用
+      if (window.electron && window.electron.app && window.electron.app.close) {
+        window.electron.app.close();
+      } else {
+        // 如果没有 close 方法，直接关闭窗口
+        window.close();
+      }
+    });
+
+    // 初始化
+    const init = () => {
+      loadLogs();
+    };
+
+    // 页面加载完成后初始化
+    document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+
+</html>

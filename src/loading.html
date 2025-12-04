@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>启动中</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --text-color: #333;
+            --success-color: #27ae60;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--text-color);
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 80%;
+            max-height: 90vh;
+            overflow: hidden;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--primary-color);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .logs-container {
+            text-align: left;
+            background: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            border: 1px solid #e9ecef;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 2px 0;
+        }
+
+        .log-timestamp {
+            color: #6c757d;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+
+        .log-info {
+            color: var(--primary-color);
+        }
+
+        .log-success {
+            color: var(--success-color);
+            font-weight: bold;
+        }
+
+        .log-error {
+            color: var(--error-color);
+            font-weight: bold;
+        }
+
+        .log-warning {
+            color: var(--warning-color);
+        }
+
+        .log-debug {
+            color: #6c757d;
+        }
+
+        .hint {
+            font-size: 13px;
+            color: #6c757d;
+            margin-top: 15px;
+            line-height: 1.4;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+        }
+
+        .status-connecting {
+            background-color: var(--warning-color);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-success {
+            background-color: var(--success-color);
+        }
+
+        .status-error {
+            background-color: var(--error-color);
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="loading-container">
+        <h2>少女祈祷中...</h2>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="logs-container" id="logsContainer">
+            <div class="log-entry">
+                <span class="log-timestamp" id="currentTime"></span>
+                <span class="log-info">正在初始化应用程序...</span>
+            </div>
+        </div>
+        <div class="hint" id="hint">启动可能需要一些时间，请耐心等待</div>
+    </div>
+
+    <script>
+        const logsContainer = document.getElementById('logsContainer');
+        const progressBar = document.getElementById('progressBar');
+        const hintElement = document.getElementById('hint');
+        const currentTimeElement = document.getElementById('currentTime');
+
+        // 更新当前时间显示
+        function updateCurrentTime() {
+            const now = new Date();
+            currentTimeElement.textContent = now.toLocaleTimeString();
+        }
+        setInterval(updateCurrentTime, 1000);
+        updateCurrentTime();
+
+        let progress = 0;
+
+        // 添加日志
+        function addLog(message, type = 'info') {
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString();
+
+            const logEntry = document.createElement('div');
+            logEntry.className = 'log-entry';
+            logEntry.innerHTML = `
+      <span class="log-timestamp">${timestamp}</span>
+      <span class="log-${type}">${message}</span>
+    `;
+
+            logsContainer.appendChild(logEntry);
+            logsContainer.scrollTop = logsContainer.scrollHeight;
+        }
+
+        // 更新进度条
+        function updateProgress(targetProgress) {
+            progress = Math.min(targetProgress, 100);
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // 更新提示状态
+        function updateHint(message, type = 'connecting') {
+            hintElement.innerHTML = `<span class="status-indicator status-${type}"></span> ${message}`;
+        }
+
+        // 初始状态
+        addLog('正在初始化应用程序...', 'info');
+        updateProgress(10);
+        updateHint('正在启动应用程序，请稍候...', 'connecting');
+
+        // IPC
+        function setupIPC() {
+            if (window.electron && window.electron.ipcRenderer) {
+                // 监听加载状态
+                window.electron.ipcRenderer.on('loading-status', (message) => {
+                    console.log('收到loading-status:', message);
+
+                    let logType = 'info';
+                    if (message.includes('成功') || message.includes('完成')) {
+                        logType = 'success';
+                    } else if (message.includes('失败') || message.includes('错误')) {
+                        logType = 'error';
+                    } else if (message.includes('警告')) {
+                        logType = 'warning';
+                    }
+
+                    addLog(message, logType);
+
+                    // 进度条更新
+                    if (message.includes('开始启动')) {
+                        updateProgress(30);
+                    } else if (message.includes('Tomcat')) {
+                        updateProgress(50);
+                    } else if (message.includes('SpringBoot应用启动完成')) {
+                        updateProgress(70);
+                    } else if (message.includes('弹幕发射场')) {
+                        updateProgress(85);
+                    } else if (message.includes('连接成功')) {
+                        updateProgress(95);
+                    } else if (message.includes('正在进入主页面')) {
+                        updateProgress(100);
+                        updateHint('即将进入主界面...', 'success');
+                    }
+                });
+
+                // 监听Java日志
+                window.electron.ipcRenderer.on('java-log', (log) => {
+                    console.log('收到java-log:', log);
+                    // 可选：在页面显示Java详细日志
+                    // addLog(`Java: ${log}`, 'debug');
+                });
+
+                // 监听Java错误
+                window.electron.ipcRenderer.on('java-error', (error) => {
+                    console.log('收到java-error:', error);
+                    addLog(`错误: ${error}`, 'error');
+                });
+            } else {
+                console.log('等待Electron API...');
+                setTimeout(setupIPC, 100);
+            }
+        }
+
+        // 延迟一点时间设置IPC监听器
+        setTimeout(setupIPC, 500);
+    </script>
+</body>
+
+</html>

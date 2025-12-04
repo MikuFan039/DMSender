@@ -1,0 +1,88 @@
+{
+  "name": "dmsender",
+  "version": "1.2.0",
+  "description": "弹幕发射场本地版，由淡光开发，葱娘构建",
+  "author": "淡い光",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^22.3.27",
+    "electron-builder": "^23.6.0"
+  },
+  "build": {
+    "productName": "弹幕发射场",
+    "appId": "com.hikari.danmakusender",
+    "copyright": "弹幕Art研究社",
+    "compression": "maximum",
+    "directories": {
+      "output": "dist"
+    },
+    "asar": "true",
+    "files": [
+      "src/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "jre",
+        "to": "jre",
+        "filter": [
+          "**/*"
+        ]
+      },
+      {
+        "from": "app.jar",
+        "to": "."
+      }
+    ],
+    "win": {
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ],
+      "compression": "maximum",
+      "icon": "icon.ico"
+    },
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "compression": "maximum",
+      "category": "public.app-category.utilities",
+      "icon": "icon.icns"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "snap",
+        "tar.gz"
+      ],
+      "compression": "maximum",
+      "icon": "icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowElevation": "true",
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "弹幕发射场",
+      "menuCategory": "弹幕工具"
+    }
+  },
+  "keywords": [
+    "弹幕",
+    "工具",
+    "哔哩哔哩"
+  ],
+  "license": "ISC",
+  "dependencies": {}
+}
