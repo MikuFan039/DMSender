@@ -135,6 +135,7 @@ DMSender/
 
 <details>
 <summary>以下是`package.json`的内容和注释</summary>
+
 ```json
 {
     // 项目基本信息
@@ -237,6 +238,7 @@ DMSender/
     }
 }
 ```
+
 </details>
 
 **附链接：**
