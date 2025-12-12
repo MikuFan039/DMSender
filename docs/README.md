@@ -133,118 +133,111 @@ DMSender/
 
 2. 配置打包配置
 
+<details>
+<summary>以下是`package.json`的内容和注释</summary>
 ```json
-/* package.json 内容*/
 {
-  // 项目基本信息
-  "name": "dmsender", // 项目名称
-  "version": "1.2.0", // 版本号
-  "description": "弹幕发射场本地版，由淡光开发，葱娘构建", // 项目描述
-  "author": "淡い光", // 作者信息
-  "main": "src/main.js", // Electron 应用的主进程入口文件
-  "license": "ISC", // 开源许可证类型
-  "keywords": [ // npm 搜索关键词
-    "弹幕",
-    "工具",
-    "哔哩哔哩"
-  ],
-
-  // 脚本命令
-  "scripts": {
-    "start": "electron .", // 启动开发模式
-    "pack": "electron-builder --dir", // 打包应用但不生成安装包
-    "dist": "electron-builder" // 构建并生成分发安装包
-  },
-
-  // 开发依赖 (仅在开发时需要)
-  "devDependencies": {
-    "electron": "^22.3.27", // Electron 框架
-    "electron-builder": "^23.6.0" // 打包工具
-  },
-
-  // 生产依赖 (目前为空)
-  "dependencies": {},
-
-  // Electron 构建配置
-  "build": {
-    "productName": "弹幕发射场", // 产品名称
-    "appId": "com.hikari.danmakusender", // 应用唯一标识符
-    "copyright": "弹幕Art研究社", // 版权信息
-    "compression": "maximum", // 最大压缩以减小文件体积
-    "asar": "false", // 禁用 asar 打包格式
-    
-    // 输出目录配置
-    "directories": {
-      "output": "dist" // 构建输出目录
-    },
-    
-    // 包含的文件
-    "files": [
-      "src/**/*", // 包含 src 目录下所有文件
-      "package.json" // 包含 package.json
+    // 项目基本信息
+    "name": "dmsender", // 项目名称
+    "version": "1.2.0", // 版本号
+    "description": "弹幕发射场本地版，由淡光开发，葱娘构建", // 项目描述
+    "author": "淡い光", // 作者信息
+    "main": "src/main.js", // Electron 应用的主进程入口文件
+    "license": "ISC", // 开源许可证类型
+    "keywords": [ // npm 搜索关键词
+        "弹幕",
+        "工具",
+        "哔哩哔哩"
     ],
-    
-    // 额外资源文件
-    "extraResources": [
-      {
-        "from": "jre", // Java 运行环境
-        "to": "jre", // 输出到应用内的 jre 目录
-        "filter": ["**/*"]
-      },
-      {
-        "from": "app.jar", // Java 应用程序
-        "to": "." // 输出到应用根目录
-      }
-    ],
-
-    // Windows 平台配置
-    "win": {
-      "target": [ // 打包目标格式
-        "nsis", // Windows 安装程序
-        "portable", // 便携版
-        "zip" // 压缩包
-      ],
-      "compression": "maximum",
-      "icon": "icon.ico" // 应用图标
+    // 脚本命令
+    "scripts": {
+        "start": "electron .", // 启动开发模式
+        "pack": "electron-builder --dir", // 打包应用但不生成安装包
+        "dist": "electron-builder" // 构建并生成分发安装包
     },
-
-    // macOS 平台配置
-    "mac": {
-      "target": [
-        "dmg", // macOS 磁盘映像
-        "zip" // 压缩包
-      ],
-      "compression": "maximum",
-      "category": "public.app-category.utilities", // 应用分类
-      "icon": "icon.icns" // macOS 图标
+    // 开发依赖 (仅在开发时需要)
+    "devDependencies": {
+        "electron": "^22.3.27", // Electron 框架
+        "electron-builder": "^23.6.0" // 打包工具
     },
-
-    // Linux 平台配置
-    "linux": {
-      "target": [ // 多种 Linux 包格式
-        "AppImage", // 便携式应用格式
-        "deb", // Debian/Ubuntu 包
-        "rpm", // Red Hat/CentOS 包
-        "snap", // 通用 Linux 包
-        "tar.gz" // 压缩包
-      ],
-      "compression": "maximum",
-      "icon": "icon.png" // Linux 图标
-    },
-
-    // NSIS (Windows 安装程序) 配置
-    "nsis": {
-      "oneClick": false, // 禁用一键安装
-      "allowElevation": "true", // 允许权限提升
-      "allowToChangeInstallationDirectory": true, // 允许选择安装目录
-      "createDesktopShortcut": true, // 创建桌面快捷方式
-      "createStartMenuShortcut": true, // 创建开始菜单快捷方式
-      "shortcutName": "弹幕发射场", // 快捷方式名称
-      "menuCategory": "弹幕工具" // 开始菜单分类
+    // 生产依赖 (目前为空)
+    "dependencies": {},
+    // Electron 构建配置
+    "build": {
+        "productName": "弹幕发射场", // 产品名称
+        "appId": "com.hikari.danmakusender", // 应用唯一标识符
+        "copyright": "弹幕Art研究社", // 版权信息
+        "compression": "maximum", // 最大压缩以减小文件体积
+        "asar": "true", // asar 打包
+        // 输出目录配置
+        "directories": {
+            "output": "dist" // 构建输出目录
+        },
+        // 包含的文件
+        "files": [
+            "src/**/*", // 包含 src 目录下所有文件
+            "package.json" // 包含 package.json
+        ],
+        // 额外资源文件
+        "extraResources": [
+            {
+                "from": "jre", // Java 运行环境
+                "to": "jre", // 输出到应用内的 jre 目录
+                "filter": [
+                    "**/*"
+                ]
+            },
+            {
+                "from": "app.jar", // Java 应用程序
+                "to": "." // 输出到应用根目录
+            }
+        ],
+        // Windows 平台配置
+        "win": {
+            "target": [ // 打包目标格式
+                "nsis", // Windows 安装程序
+                "portable", // 便携版
+                "zip" // 压缩包
+            ],
+            "compression": "maximum", // 压缩等级
+            "icon": "icon.ico" // 应用图标
+        },
+        // macOS 平台配置
+        "mac": {
+            "target": [
+                "dmg", // macOS 磁盘映像
+                "zip" // 压缩包
+            ],
+            "compression": "maximum", // 压缩等级
+            "category": "public.app-category.utilities", // 应用分类
+            "icon": "icon.icns" // macOS 图标
+        },
+        // Linux 平台配置
+        "linux": {
+            "target": [ // 多种 Linux 包格式
+                "AppImage", // 便携式应用格式
+                "deb", // Debian/Ubuntu 包
+                "rpm", // Red Hat/CentOS 包
+                "snap", // 通用 Linux 包
+                "tar.gz" // 压缩包
+            ],
+            "compression": "maximum", // 压缩等级
+            "icon": "icon.png" // Linux 图标
+        },
+        // NSIS (Windows 安装程序) 配置
+        "nsis": {
+            "oneClick": false, // 禁用一键安装
+            "allowElevation": "true", // 允许权限提升
+            "allowToChangeInstallationDirectory": true, // 允许选择安装目录
+            "createDesktopShortcut": true, // 创建桌面快捷方式
+            "createStartMenuShortcut": true, // 创建开始菜单快捷方式
+            "shortcutName": "弹幕发射场", // 快捷方式名称
+            "menuCategory": "弹幕工具" // 开始菜单分类
+        }
     }
-  }
 }
 ```
+</details>
 
 **附链接：**
 
