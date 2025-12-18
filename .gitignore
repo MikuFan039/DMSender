@@ -1,4 +1,5 @@
-jre/
+jre/*
+!jre/.gitkeep
 node_modules/
 dist/
 /app.jar

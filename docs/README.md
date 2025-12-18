@@ -120,16 +120,31 @@ npx electron
 
 1. 配置项目结构
 
+<details>
+<summary>以下是本项目的文件结构和注释</summary>
+
 ```text
 DMSender/
-├── src/
-│   ├── main.js         # 主进程
-│   ├── preload.json    # 预加载脚本
-├── jre/                # JRE
-├── app.jar        		# 主程序
-├── package.json        # 配置文件
-└── icon.ico            # 图标
+├── README.md
+├── docs/
+│   └── README.md       # 构建教程文档
+├── app.jar             # Java 主程序
+├── icon.ico            # 程序图标
+├── package.json        # npm 项目配置
+├── package-lock.json   # npm 软件包配置
+├── jre/                # 精简 jre
+└── src
+    ├── error.html      # 错误页面
+    ├── loading.html    # 加载页面
+    ├── main.js         # 主进程脚本
+    └── preload.js      # 预加载脚本
 ```
+
+*注意事项：
+1. 需将编译后的jar文件复制到项目根目录，并重命名为`app.jar`
+2. 需将精简后的jre复制到项目根目录下的`jre`文件夹中
+
+</details>
 
 2. 配置打包配置
 
